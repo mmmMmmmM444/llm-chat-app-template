@@ -12,6 +12,21 @@ export interface Env {
 	 * Binding for static assets.
 	 */
 	ASSETS: { fetch: (request: Request) => Promise<Response> };
+
+	/**
+	 * Optional AI Gateway ID. When unset, requests go straight to Workers AI.
+	 */
+	AI_GATEWAY_ID?: string;
+
+	/**
+	 * Optional: set to "true" to bypass the AI Gateway cache.
+	 */
+	AI_GATEWAY_SKIP_CACHE?: string;
+
+	/**
+	 * Optional: AI Gateway cache time-to-live in seconds.
+	 */
+	AI_GATEWAY_CACHE_TTL?: string;
 }
 
 /**
