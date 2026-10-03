@@ -74,14 +74,7 @@ async function handleChatRequest(
 				max_tokens: 1024,
 				stream: true,
 			},
-			{
-				// Uncomment to use AI Gateway
-				// gateway: {
-				//   id: "YOUR_GATEWAY_ID", // Replace with your AI Gateway ID
-				//   skipCache: false,      // Set to true to bypass cache
-				//   cacheTtl: 3600,        // Cache time-to-live in seconds
-				// },
-			},
+			getGatewayOptions(env),
 		);
 
 		return new Response(stream, {
@@ -101,4 +94,29 @@ async function handleChatRequest(
 			},
 		);
 	}
+}
+
+/**
+ * Builds AI Gateway options from environment variables.
+ * Returns no gateway when AI_GATEWAY_ID is unset, so requests go directly to Workers AI.
+ */
+function getGatewayOptions(env: Env): AiOptions {
+	const id = env.AI_GATEWAY_ID?.trim();
+	if (!id) {
+		return {};
+	}
+
+	const gateway: GatewayOptions = {
+		id,
+		skipCache: env.AI_GATEWAY_SKIP_CACHE === "true",
+	};
+
+	if (env.AI_GATEWAY_CACHE_TTL) {
+		const cacheTtl = Number(env.AI_GATEWAY_CACHE_TTL);
+		if (Number.isFinite(cacheTtl) && cacheTtl >= 0) {
+			gateway.cacheTtl = cacheTtl;
+		}
+	}
+
+	return { gateway };
 }

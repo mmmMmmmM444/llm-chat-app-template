@@ -125,16 +125,25 @@ To use a different AI model, update the `MODEL_ID` constant in `src/index.ts`. Y
 
 ### Using AI Gateway
 
-The template includes commented code for AI Gateway integration, which provides additional capabilities like rate limiting, caching, and analytics.
+The template can route Workers AI requests through [AI Gateway](https://developers.cloudflare.com/ai-gateway/) for caching, rate limiting, and analytics. It is off by default and turns on when `AI_GATEWAY_ID` is set.
 
 To enable AI Gateway:
 
-1. [Create an AI Gateway](https://dash.cloudflare.com/?to=/:account/ai/ai-gateway) in your Cloudflare dashboard
-2. Uncomment the gateway configuration in `src/index.ts`
-3. Replace `YOUR_GATEWAY_ID` with your actual AI Gateway ID
-4. Configure other gateway options as needed:
-   - `skipCache`: Set to `true` to bypass gateway caching
-   - `cacheTtl`: Set the cache time-to-live in seconds
+1. [Create an AI Gateway](https://dash.cloudflare.com/?to=/:account/ai/ai-gateway) in your Cloudflare dashboard and copy its ID
+2. Set the gateway ID as a variable:
+   - Local development: add it to a `.dev.vars` file in the project root
+     ```
+     AI_GATEWAY_ID=your-gateway-id
+     ```
+   - Production: add it under `vars` in `wrangler.jsonc`, or in the dashboard under **Workers & Pages > your Worker > Settings > Variables and Secrets**
+     ```jsonc
+     "vars": { "AI_GATEWAY_ID": "your-gateway-id" }
+     ```
+3. Optional settings:
+   - `AI_GATEWAY_SKIP_CACHE`: set to `true` to bypass gateway caching
+   - `AI_GATEWAY_CACHE_TTL`: cache time-to-live in seconds (e.g. `3600`)
+
+Remove `AI_GATEWAY_ID` (or leave it empty) to send requests directly to Workers AI again.
 
 Learn more about [AI Gateway](https://developers.cloudflare.com/ai-gateway/).
 
